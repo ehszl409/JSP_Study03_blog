@@ -12,7 +12,16 @@
 
 
 ## 12월 31일 
-- 데이터 베이스 생성, 테이블 생성
+- 데이터 베이스 생성
+
+``` MySQL
+create user 'bloguser'@'%' identified by 'bitc5600';
+grant all privileges on *.* to 'bloguser'@'%';
+create database blog;
+use blog;
+```
+
+- 테이블 생성
 
 ``` MySQL
 create user 'bloguser'@'%' identified by 'bitc5600';

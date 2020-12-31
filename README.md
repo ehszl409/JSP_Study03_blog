@@ -1,7 +1,17 @@
 # JSP_Study03_blog
 ----------------------------------
 
-- 12월 31일 수업
+## 1. 환경
+- 윈도우
+- JDK 1.8,
+- STS툴
+- 톰켓 9.0
+- UTF-8
+- POSTMAN
+- MySQL8.0
+
+
+- 12월 31일 
 
 ``` MySQL
 create user 'bloguser'@'%' identified by 'bitc5600';

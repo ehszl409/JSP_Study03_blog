@@ -1,4 +1,4 @@
-# JSP_Study03_blog
+### JSP_Study03_blog
 ----------------------------------
 
 ## 1. 환경
@@ -11,7 +11,7 @@
 - MySQL8.0
 
 
-- 12월 31일 
+## 12월 31일 
 
 ``` MySQL
 create user 'bloguser'@'%' identified by 'bitc5600';

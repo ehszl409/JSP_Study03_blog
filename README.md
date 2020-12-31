@@ -6,7 +6,6 @@
 - JDK 1.8,
 - STS tool
 - tomcat 9.0
-- UTF-8
 - POSTMAN
 - MySQL8.0
 - lombok

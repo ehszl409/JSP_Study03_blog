@@ -12,6 +12,7 @@
 
 
 ## 12월 31일 
+- 데이터 베이스 생성, 테이블 
 
 ``` MySQL
 create user 'bloguser'@'%' identified by 'bitc5600';

@@ -60,8 +60,8 @@
 			data : username, // 요청하는 데이터
 			contentType : "text/plain; charset=utf-8", // 요청하는 데이터 타입
 			dataType : "text" // 응답 받을 데이터의 타입을 적으면 자바스크립트 오브젝트로 파싱해줌.
-		}).done(function(data) { // 데이터를 담아서 통신을 보내는 함수
-			if (data === 'ok') { // username의 타입과 값을 비교해서 
+		}).done(function(data) { // ajax통신이 정상적으로 완료되고 응답 받은 데이터값이 done함수 속 으로에 들어가서 호출된다. 
+			if (data === 'ok') { // 유저네임이 중복된다. 
 				isChecking = false;
 				alert('유저네임이 중복되었습니다.')
 			} else {

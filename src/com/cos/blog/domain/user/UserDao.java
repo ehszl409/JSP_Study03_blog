@@ -18,7 +18,7 @@ public class UserDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs  = null;
 		try {
-			// 아
+			// 
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getUsername());
 			pstmt.setString(2, dto.getPassword());

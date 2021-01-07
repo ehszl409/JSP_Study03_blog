@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%
 	RequestDispatcher dis = 
-	request.getRequestDispatcher("board?cmd=list");
+	request.getRequestDispatcher("board?cmd=list&page=0");
 	dis.forward(request, response);
 	// 톰캣이 생성한 req, resp를 재사용한다.
 	// 다시 접근하는 것이 아니라 내부적으로 움직인다는 뜻이다.

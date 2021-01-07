@@ -86,7 +86,8 @@ public class BoardController extends HttpServlet {
 		} else if(cmd.equals("list")) { // 게시글들 보여주기
 			// 서비스한테 DB에 가서 게시물 목록을 가져오라고 요청
 			// 그리고 가져오면 양이 많기 때문에 리스트에 저장한다.
-			List<Board> boards = boardService.목록보기();
+			int page = Integer.parseInt(request.getParameter("page")); 
+			List<Board> boards = boardService.목록보기(page);
 			System.out.println(boards);
 			request.setAttribute("boardList", boards);
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");

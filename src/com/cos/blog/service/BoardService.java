@@ -25,8 +25,8 @@ public class BoardService {
 	// 서비스는 컨트롤러로 부터 게시글 목록 보는 함수를 요청 받았고,
 	// DAO한테 fidnAll()이라는 함수를 요청해서 DB에 있는 게시글 데이터를
 	// 리턴하길 요청한다. 역시 데이터 양이 많아 리스트로 리턴 해야한다고 요청한다.
-	public List<Board> 목록보기(){
-		return boardDao.findAll();
+	public List<Board> 목록보기(int page){
+		return boardDao.findAll(page);
 	}
 	
 }

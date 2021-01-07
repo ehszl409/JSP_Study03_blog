@@ -37,9 +37,9 @@ public class BoardDao {
 	
 	
 	// DAO의 역할 DB에 접근에 쿼리를 실행해서 데이터를 리턴해줘야 한다
-	public List<Board> findAll() {
+	public List<Board> findAll(int page) {
 		// 쿼리 준비
-		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board ORDER BY id DESC ";
+		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board ORDER BY id DESC LIMIT ?,4";
 		// DB 연결
 		Connection conn = DB.getConnection();
 		// 쿼리를 파싱해준다.
@@ -50,6 +50,7 @@ public class BoardDao {
 		ResultSet rs = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, page*4);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {

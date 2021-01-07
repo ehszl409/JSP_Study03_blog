@@ -30,9 +30,10 @@
 		
 
 	<br />
+	<!-- disabled -->
 	<ul class="pagination justify-content-center">
-		<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-		<li class="page-item"><a class="page-link" href="#">Next</a></li>
+		<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page-1}">Previous</a></li>
+		<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page+1}">Next</a></li>
 	</ul>
 </div>
 

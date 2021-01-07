@@ -40,6 +40,7 @@ public class BoardDao {
 	public List<Board> findAll(int page) {
 		// 쿼리 준비
 		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board ORDER BY id DESC LIMIT ?,4";
+		
 		// DB 연결
 		Connection conn = DB.getConnection();
 		// 쿼리를 파싱해준다.
@@ -71,5 +72,28 @@ public class BoardDao {
 		}
 		return null;
 	}
+	
+	
+		public int boardMax() {
+			// 쿼리 준비
+			String sql = "SELECT Max(id) FROM board";
+			Connection conn = DB.getConnection();
+			// 쿼리를 파싱해준다.
+			PreparedStatement pstmt = null;
+			
+			ResultSet rs = null;
+			try {
+				pstmt = conn.prepareStatement(sql);
+				rs = pstmt.executeQuery();		
+				while(rs.next()) {
+					return rs.getInt("Max(id)");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DB.close(conn, pstmt, rs);
+			}
+			return 0;
+		}
 	
 }

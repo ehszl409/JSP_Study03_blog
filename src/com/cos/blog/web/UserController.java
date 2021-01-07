@@ -69,14 +69,20 @@ public class UserController extends HttpServlet {
 			// 서비스 메소드 중 로그인()메소드를 호출하고 그 안에 dto값을 담아서 보내준다.
 			// 이 후 리턴 받는 값은 유저타입의 userEntity속에 담아 주도록 한다.
 			User userEntity = userService.로그인(dto);
+			
+			// 3. 서비스로 부터 리턴 받은 값으로 세션값을 저장한다.
+			// userEntity에 값이 담겼다라는 것은 가입된 정보가 있어서 DB로부터 가져왔다는 뜻이기에
+			// userEntity가 null이 아닌지만 판단 해주면 된다.
 			if(userEntity != null) {
+				// 세션 공간을 가져오고 'principal'이라는 key값에 userEntity와 함께 담아준다.
 				HttpSession session = request.getSession();
 				session.setAttribute("principal", userEntity);// 인증주체
-				
+				// 메인 페이지로 이동 시킨다.
 				response.sendRedirect("index.jsp");
 			}else {
 				Script.back(response, "로그인실패");
 			}
+			
 			
 		} else if (cmd.equals("joinForm")) {
 			RequestDispatcher dis = 

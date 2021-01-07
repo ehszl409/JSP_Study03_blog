@@ -9,7 +9,6 @@ import com.cos.blog.domain.user.dto.JoinReqDto;
 import com.cos.blog.domain.user.dto.LoginReqDto;
 
 public class UserDao {
-	
 	// 로그인을 위해 DB에 해당 유저 네임과 비밀번호가 있는지 확인하는 곳이다.
 	// 여기서 데이터 비교를 위한 진짜 연산이 이루어 진다.
 	public User findByUsernameAndPassword(LoginReqDto dto) {
@@ -18,13 +17,17 @@ public class UserDao {
 		PreparedStatement pstmt = null;
 		ResultSet rs  = null;
 		try {
-			// 
+			// dto에 담겨 있는 username과 password를 쿼리문에 넣어준다.
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getUsername());
 			pstmt.setString(2, dto.getPassword());
 			rs =  pstmt.executeQuery();
 
-			// Persistence API
+			// 여기서 username과 password가 있는지 살펴보는데,
+			// 테이블의 스키마를 한 줄 내려가면서 살펴본다.
+			// username과 password를 담은 쿼리문이 존재 한다는 것은 
+			// 가입되어 있는 사용자 라는 뜻이기에 해당 row에 있는 id,username, email, address를
+			// user 오브젝트에 담아서 리턴 해준다.
 			if(rs.next()) {
 				User user = User.builder()
 						.id(rs.getInt("id"))
@@ -39,7 +42,6 @@ public class UserDao {
 		} finally { // 무조건 실행
 			DB.close(conn, pstmt, rs);
 		}
-
 		return null;
 	}
 	

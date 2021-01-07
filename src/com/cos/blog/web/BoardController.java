@@ -23,6 +23,7 @@ import com.cos.blog.utill.Script;
 @WebServlet("/board")
 public class BoardController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
    
     public BoardController() {
         super();
@@ -88,6 +89,28 @@ public class BoardController extends HttpServlet {
 			// 그리고 가져오면 양이 많기 때문에 리스트에 저장한다.
 			int page = Integer.parseInt(request.getParameter("page")); 
 			List<Board> boards = boardService.목록보기(page);
+			
+			int boardMax = boardService.총게시글();
+			int limitPage = boardMax/4;
+			
+			boolean isEnd = false;
+			boolean isStart = false;
+			if(page == limitPage) {
+				isEnd = true;
+				request.setAttribute("isEnd", isEnd);
+			} else if(page == 0) {
+				isStart = true;
+				request.setAttribute("isStart", isStart);
+			} else {
+				isStart = false;
+				isEnd = false;
+				request.setAttribute("isStart", isStart);
+				request.setAttribute("isEnd", isEnd);
+			} 
+			
+			System.out.println("boards.size(): " + boards.size());
+			System.out.println("boardMax: " + boardMax);
+			System.out.println("limitPage: " + limitPage);
 			System.out.println(boards);
 			request.setAttribute("boardList", boards);
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");

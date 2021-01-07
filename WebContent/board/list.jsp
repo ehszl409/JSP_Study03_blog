@@ -18,7 +18,6 @@
 	<div class="progress col-md-12 m-2">
 		<div class="progress-bar" style="width: 70%"></div>
 	</div>
-		
 		<c:forEach var="eachboard" items="${boardList}">
 		<div class="card col-md-12 m-2">
 			<div class="card-body">
@@ -27,13 +26,29 @@
 			</div>
 		</div>
 		</c:forEach>
-		
-
 	<br />
+	
+	
 	<!-- disabled -->
 	<ul class="pagination justify-content-center">
-		<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page-1}">Previous</a></li>
-		<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page+1}">Next</a></li>
+		<c:choose>
+			<c:when test="${isStart == true}">
+				<li class="page-item disabled"><a class="page-link" href="board?cmd=list&page=${param.page-1}">Previous</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page-1}">Previous</a></li>
+			</c:otherwise>
+		</c:choose>
+		<c:choose>
+			<c:when test="${isEnd == true}">
+				<li class="page-item disabled"><a class="page-link" href="board?cmd=list&page=${param.page+1}">Next</a></li>
+			</c:when>
+			<c:otherwise>
+				<li class="page-item"><a class="page-link" href="board?cmd=list&page=${param.page+1}">Next</a></li>
+			</c:otherwise>
+		</c:choose>
+	
+		
 	</ul>
 </div>
 

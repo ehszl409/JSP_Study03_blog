@@ -29,4 +29,8 @@ public class BoardService {
 		return boardDao.findAll(page);
 	}
 	
+	public int 총게시글() {
+		return boardDao.boardMax();
+	}
+	
 }

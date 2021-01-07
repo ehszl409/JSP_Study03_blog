@@ -10,12 +10,15 @@ import com.cos.blog.domain.user.dto.LoginReqDto;
 
 public class UserDao {
 	
+	// 로그인을 위해 DB에 해당 유저 네임과 비밀번호가 있는지 확인하는 곳이다.
+	// 여기서 데이터 비교를 위한 진짜 연산이 이루어 진다.
 	public User findByUsernameAndPassword(LoginReqDto dto) {
 		String sql = "SELECT id, username, email, address FROM user WHERE username = ? AND password = ?";
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs  = null;
 		try {
+			// 아
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getUsername());
 			pstmt.setString(2, dto.getPassword());

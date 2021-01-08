@@ -1,6 +1,8 @@
 package com.cos.blog.web;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.RequestDispatcher;
@@ -13,10 +15,14 @@ import javax.servlet.http.HttpSession;
 
 import com.cos.blog.domain.board.Board;
 import com.cos.blog.domain.board.BoardDao;
+import com.cos.blog.domain.board.dto.DeleteReqDto;
+import com.cos.blog.domain.board.dto.DeleteRespDto;
+import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
 import com.cos.blog.utill.Script;
+import com.google.gson.Gson;
 
 
 
@@ -90,30 +96,66 @@ public class BoardController extends HttpServlet {
 			int page = Integer.parseInt(request.getParameter("page")); 
 			List<Board> boards = boardService.목록보기(page);
 			
-			int boardMax = boardService.총게시글();
-			int limitPage = boardMax/4;
 			
-			boolean isEnd = false;
-			boolean isStart = false;
-			if(page == limitPage) {
-				isEnd = true;
-				request.setAttribute("isEnd", isEnd);
-			} else if(page == 0) {
-				isStart = true;
-				request.setAttribute("isStart", isStart);
-			} else {
-				isStart = false;
-				isEnd = false;
-				request.setAttribute("isStart", isStart);
-				request.setAttribute("isEnd", isEnd);
-			} 
-			
-			System.out.println("boards.size(): " + boards.size());
-			System.out.println("boardMax: " + boardMax);
-			System.out.println("limitPage: " + limitPage);
+			int boardCount = boardService.글개수();
+			int lastPage = (boardCount-1)/4; // 4/4 => 0 첫페이지page = 0
+			double currentPosition = (double)page/lastPage*100;
+		
+			System.out.println("boardCount: " + boardCount);
+			System.out.println("lastPage: " + lastPage);
 			System.out.println(boards);
 			request.setAttribute("boardList", boards);
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("currentPosition", currentPosition);
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");
+			dis.forward(request, response);
+		} else if (cmd.equals("detail")) { // 상세보기 구현
+			System.out.println("detail접속.");
+			int id = Integer.parseInt(request.getParameter("id"));
+			DetailReqDto dto = boardService.글상세보기(id);
+			
+			if(dto == null) {
+				Script.back(response, "글 상세보기를 불러오는 것이 실패 했습니다.");
+			} else {
+			request.setAttribute("dto", dto);
+			System.out.println("dto:" + dto);
+			RequestDispatcher dis = 
+			request.getRequestDispatcher("board/detail.jsp");
+			dis.forward(request, response);
+			}
+		} else if (cmd.equals("delete")) {
+			System.out.println("delete접속.");
+			// 1. Json파일 받아주기
+			BufferedReader br = request.getReader();
+			String data = br.readLine();
+			
+			// 2. Json으로 바꾸기
+			Gson gson = new Gson();
+			DeleteReqDto dto = gson.fromJson(data, DeleteReqDto.class);
+			//System.out.println("dto: " + dto);
+			
+			// 3. 서비스에서 받은 값으로 분기 해주기
+			int result = boardService.게시글삭제(dto.getBoardId());
+			System.out.println("result: " + result);
+			DeleteRespDto respDto = new DeleteRespDto();
+			if(result == 1) {
+				respDto.setStatus("okay");
+			} else {
+				respDto.setStatus("fail");
+			}
+			
+			// 4. 자바 오브젝트를 Json으로 바꿔 응답해주기
+			String respData = gson.toJson(respDto);
+			System.out.println("respData: "+ respData);
+			PrintWriter out = response.getWriter();
+			out.print(respData);
+			out.flush();
+		} else if(cmd.equals("updateForm")) {
+			// 상세보기 데이터 필요
+			
+			
+			RequestDispatcher dis = 
+			request.getRequestDispatcher("board/updateForm.jsp");
 			dis.forward(request, response);
 		}
 	}

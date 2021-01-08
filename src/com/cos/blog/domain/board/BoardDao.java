@@ -9,12 +9,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cos.blog.config.DB;
+import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 import com.cos.blog.domain.user.dto.JoinReqDto;
 
 public class BoardDao {
 	
-	public int save(saveReqDto dto) { // 회원가입
+	
+	
+	public int deleteById(int boardId) { // 게시글 삭제
+		String sql = "DELETE FROM board WHERE id = ?";
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, boardId);
+			int result = pstmt.executeUpdate();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally { // 무조건 실행
+			DB.close(conn, pstmt);
+		}
+		return -1;
+		
+	}
+	
+	
+	public int updateReadCount(int id) { // 조회수 증가
+		String sql = "UPDATE board SET readCount = readCount+1 WHERE id = ?";
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			int result = pstmt.executeUpdate();
+			return 1;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally { // 무조건 실행
+			DB.close(conn, pstmt);
+		}
+		return 0;
+		
+	}
+	
+	
+	
+	public int save(saveReqDto dto) { // 게시물 작성
 		String sql = "INSERT INTO board(userId, title, content, createDate) VALUES(?,?,?,now())";
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
@@ -37,7 +79,7 @@ public class BoardDao {
 	
 	
 	// DAO의 역할 DB에 접근에 쿼리를 실행해서 데이터를 리턴해줘야 한다
-	public List<Board> findAll(int page) {
+	public List<Board> findAll(int page) { // 게시물 목록
 		// 쿼리 준비
 		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board ORDER BY id DESC LIMIT ?,4";
 		
@@ -74,9 +116,9 @@ public class BoardDao {
 	}
 	
 	
-		public int boardMax() {
+		public int count() { // 총 게시글 찾기
 			// 쿼리 준비
-			String sql = "SELECT Max(id) FROM board";
+			String sql = "SELECT count(*) FROM board";
 			Connection conn = DB.getConnection();
 			// 쿼리를 파싱해준다.
 			PreparedStatement pstmt = null;
@@ -85,15 +127,51 @@ public class BoardDao {
 			try {
 				pstmt = conn.prepareStatement(sql);
 				rs = pstmt.executeQuery();		
-				while(rs.next()) {
-					return rs.getInt("Max(id)");
+				if(rs.next()) {
+					return rs.getInt(1);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				DB.close(conn, pstmt, rs);
 			}
-			return 0;
+			return -1;
 		}
+		
+		public DetailReqDto findById(int id) { // 게시글 상세보기
+			StringBuffer sb = new StringBuffer();
+			sb.append("select b.id, b.title, b.content, b.readCount, b.userId, u.username from ");
+			sb.append("board b inner join user u ");
+			sb.append("on b.userId = u.Id ");
+			sb.append("where b.Id = ?");
+			
+			Connection conn = DB.getConnection();
+			PreparedStatement pstmt = null;	
+			ResultSet rs = null;
+			try {
+				String sql = sb.toString();
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, id);
+				rs = pstmt.executeQuery();		
+				if(rs.next()) {
+					DetailReqDto dto = new DetailReqDto();
+						dto.setId(rs.getInt("b.id"));
+						dto.setTitle(rs.getString("b.title"));
+						dto.setContent(rs.getString("b.content"));
+						dto.setReadCount(rs.getInt("b.readCount"));
+						dto.setUserId(rs.getInt("b.userId"));
+						dto.setUsername(rs.getString("u.username"));
+					return dto;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				DB.close(conn, pstmt, rs);
+			}
+			return null;
+		}
+		
+		
+		
 	
 }

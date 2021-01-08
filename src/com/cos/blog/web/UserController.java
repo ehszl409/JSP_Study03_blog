@@ -40,7 +40,6 @@ public class UserController extends HttpServlet {
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String cmd = request.getParameter("cmd");
-
 		UserService userService = new UserService();
 
 		// http://localhost:8000/blog/user?cmd=loginForm

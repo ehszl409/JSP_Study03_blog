@@ -19,4 +19,9 @@ public class Board {
 	private String content;
 	private int readCount; // 조회수 디폴트값은 0
 	private Timestamp createDate;
+	
+	// 루시 적용해 보기
+	public String getTitle() {
+		return title.replaceAll("<", "&lt").replaceAll(">", "&gt");
+	}
 }

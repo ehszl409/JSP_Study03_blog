@@ -4,18 +4,21 @@ import java.util.List;
 
 import com.cos.blog.domain.board.Board;
 import com.cos.blog.domain.board.BoardDao;
+import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 
 // 게시판에 대한 많은 서비스들을 컨트롤러로 부터 요청받아 DB에게 분기 시켜주는 역할
 
 public class BoardService {
 	
-	private BoardDao boardDao;
+	private BoardDao boardDao = new BoardDao();
 	
-	// 객체를 왜 생성자에 만든이유??
-	public BoardService() {
-		boardDao = new BoardDao();
-	}
+	
+//	// 객체를 왜 생성자에 만든이유??
+//	public BoardService() {
+//		boardDao = new BoardDao();
+//	}
+//	
 	
 	// 글쓰기가 잘 되었는지 확인만 해주면 되서 int를 리턴해준다.
 	public int 글쓰기(saveReqDto dto) {
@@ -29,8 +32,22 @@ public class BoardService {
 		return boardDao.findAll(page);
 	}
 	
-	public int 총게시글() {
-		return boardDao.boardMax();
+	public int 글개수() {
+		return boardDao.count();
+	}
+	
+	public DetailReqDto 글상세보기(int id) {
+		// 조회수를 올리는 로직 구현
+		
+		int result = boardDao.updateReadCount(id);
+		if(result == 1) {
+			return boardDao.findById(id);			
+		} else 
+			return null;
+	}
+	
+	public int 게시글삭제(int boardId) {
+		return boardDao.deleteById(boardId);
 	}
 	
 }

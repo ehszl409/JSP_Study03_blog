@@ -3,20 +3,39 @@ package com.cos.blog.domain.board;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.cos.blog.config.DB;
 import com.cos.blog.domain.board.dto.DetailReqDto;
+import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
-import com.cos.blog.domain.user.dto.JoinReqDto;
+
 
 public class BoardDao {
 	
+	public int update(UpdateReqDto dto) { // 조회수 증가
+		String sql = "UPDATE board SET title = ?, content = ? WHERE id = ?";
+		Connection conn = DB.getConnection();
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getTitle());
+			pstmt.setString(2, dto.getContent());
+			pstmt.setInt(3, dto.getId());
+			int result = pstmt.executeUpdate();
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally { // 무조건 실행
+			DB.close(conn, pstmt);
+		}
+		return -1;
+		
+	}
 	
 	
+//<<<<<<< Updated upstream
 	public int deleteById(int boardId) { // 게시글 삭제
 		String sql = "DELETE FROM board WHERE id = ?";
 		Connection conn = DB.getConnection();
@@ -34,8 +53,6 @@ public class BoardDao {
 		return -1;
 		
 	}
-	
-	
 	public int updateReadCount(int id) { // 조회수 증가
 		String sql = "UPDATE board SET readCount = readCount+1 WHERE id = ?";
 		Connection conn = DB.getConnection();
@@ -44,19 +61,19 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, id);
 			int result = pstmt.executeUpdate();
-			return 1;
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally { // 무조건 실행
 			DB.close(conn, pstmt);
 		}
-		return 0;
+		return -1;
 		
 	}
-	
-	
-	
 	public int save(saveReqDto dto) { // 게시물 작성
+//=======
+//	public int save(saveReqDto dto) { // 글쓰기
+//>>>>>>> Stashed changes
 		String sql = "INSERT INTO board(userId, title, content, createDate) VALUES(?,?,?,now())";
 		Connection conn = DB.getConnection();
 		PreparedStatement pstmt = null;
@@ -82,7 +99,6 @@ public class BoardDao {
 	public List<Board> findAll(int page) { // 게시물 목록
 		// 쿼리 준비
 		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board ORDER BY id DESC LIMIT ?,4";
-		
 		// DB 연결
 		Connection conn = DB.getConnection();
 		// 쿼리를 파싱해준다.
@@ -95,7 +111,6 @@ public class BoardDao {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, page*4);
 			rs = pstmt.executeQuery();
-			
 			while(rs.next()) {
 				Board boardList = new Board();
 				boardList.setId(rs.getInt("id"));

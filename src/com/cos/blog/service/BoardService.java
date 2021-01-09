@@ -5,6 +5,7 @@ import java.util.List;
 import com.cos.blog.domain.board.Board;
 import com.cos.blog.domain.board.BoardDao;
 import com.cos.blog.domain.board.dto.DetailReqDto;
+import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 
 // 게시판에 대한 많은 서비스들을 컨트롤러로 부터 요청받아 DB에게 분기 시켜주는 역할
@@ -48,6 +49,10 @@ public class BoardService {
 	
 	public int 게시글삭제(int boardId) {
 		return boardDao.deleteById(boardId);
+	}
+	
+	public int 글수정(UpdateReqDto dto) {
+		return boardDao.update(dto);
 	}
 	
 }

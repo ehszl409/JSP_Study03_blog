@@ -4,12 +4,11 @@
 <%@ include file="../layout/header.jsp"%>
 
 <div class="container">
-
 	<c:if test="${sessionScope.principal.id == dto.userId}">
-		<button class="btn btn-warning" href="http://localhost:8000/blog/board?cmd=updateForm&id${dto.id}">수정</button>
 		<button class="btn btn-danger" onclick="deleteById(${dto.id})">삭제</button>
+		<a class="btn btn-danger" href="/blog/board?cmd=updateForm&id=${dto.id}">수정</a>
 	</c:if>
-	
+	<%-- <button class="btn btn-warning" href="/blog/board?cmd=updateForm&id=${dto.id}">수정</button> --%>
 	<br /> <br />
 	<h6 class="m-2">
 		작성자 : <i>${dto.username}</i> 조회수 : <i>${dto.readCount}</i>
@@ -82,7 +81,7 @@
 			dataType: "json" 
 			})
 		.done(function(result){
-				if(result == "okay"){
+				if(result.status == "okay"){
 						console.log(result);
 						alert("게시물 삭제 성공");
 						location.href = "index.jsp";

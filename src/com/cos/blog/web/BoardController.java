@@ -14,10 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.cos.blog.domain.board.Board;
-import com.cos.blog.domain.board.BoardDao;
 import com.cos.blog.domain.board.dto.DeleteReqDto;
 import com.cos.blog.domain.board.dto.DeleteRespDto;
 import com.cos.blog.domain.board.dto.DetailReqDto;
+import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
@@ -96,17 +96,18 @@ public class BoardController extends HttpServlet {
 			int page = Integer.parseInt(request.getParameter("page")); 
 			List<Board> boards = boardService.목록보기(page);
 			
-			
 			int boardCount = boardService.글개수();
+			
 			int lastPage = (boardCount-1)/4; // 4/4 => 0 첫페이지page = 0
 			double currentPosition = (double)page/lastPage*100;
 		
 			System.out.println("boardCount: " + boardCount);
 			System.out.println("lastPage: " + lastPage);
-			System.out.println(boards);
-			request.setAttribute("boardList", boards);
 			request.setAttribute("lastPage", lastPage);
 			request.setAttribute("currentPosition", currentPosition);
+			
+			System.out.println(boards);
+			request.setAttribute("boardList", boards);
 			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");
 			dis.forward(request, response);
 		} else if (cmd.equals("detail")) { // 상세보기 구현
@@ -146,17 +147,49 @@ public class BoardController extends HttpServlet {
 			
 			// 4. 자바 오브젝트를 Json으로 바꿔 응답해주기
 			String respData = gson.toJson(respDto);
-			System.out.println("respData: "+ respData);
+			System.out.println("respDto: " + respDto);
+			System.out.println("respData: " + respData);
 			PrintWriter out = response.getWriter();
 			out.print(respData);
 			out.flush();
-		} else if(cmd.equals("updateForm")) {
+		} else if(cmd.equals("updateForm")) { // 수정 버튼을 누르면 동작하는 요청되는 URI
 			// 상세보기 데이터 필요
-			
-			
+			// board.id를 받아온다
+			int id = Integer.parseInt(request.getParameter("id"));
+			// 글상세보기를 호출하는 이유는 
+			// 글상세보기에서 title, content를 얻어오기 위해서 입니다.
+			DetailReqDto dto = boardService.글상세보기(id);
+			// 얻어 온걸 준비해주고
+			request.setAttribute("dto", dto);
+			// updateForm으로 던저 줍니다.
+			// updateForm은 글 수정을 위한 페이지 입니다.
 			RequestDispatcher dis = 
 			request.getRequestDispatcher("board/updateForm.jsp");
 			dis.forward(request, response);
+		} else if(cmd.equals("update")) {
+			int id = Integer.parseInt(request.getParameter("id"));
+			String title = request.getParameter("title");
+			String content = request.getParameter("content");
+			
+			UpdateReqDto dto = new UpdateReqDto().builder()
+					.id(id)
+					.title(title)
+					.content(content)
+					.build();
+			
+			int result = boardService.글수정(dto);
+			if (result == 1) {
+				// 왜 샌드리다렉을 사용헸을까??
+				
+				response.sendRedirect("/blog/board?cmd=detail&id="+id);
+//				RequestDispatcher dis = 
+//				request.getRequestDispatcher("/board?cmd=detail&id="+id);
+//				dis.forward(request, response);
+			} else {
+				Script.back(response, "글 수정에 실패 했습니다.");
+			}
+			
+			
 		}
 	}
 

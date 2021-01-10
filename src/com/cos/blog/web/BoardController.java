@@ -14,8 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.cos.blog.domain.board.Board;
-import com.cos.blog.domain.board.dto.DeleteReqDto;
-import com.cos.blog.domain.board.dto.DeleteRespDto;
+import com.cos.blog.domain.board.dto.CommonRespDto;
 import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
@@ -125,29 +124,19 @@ public class BoardController extends HttpServlet {
 			dis.forward(request, response);
 			}
 		} else if (cmd.equals("delete")) {
-			System.out.println("delete접속.");
-			// 1. Json파일 받아주기
-			BufferedReader br = request.getReader();
-			String data = br.readLine();
+			// ajax요청시 URL에 있는 id값을 가져 온다.
+			int id = Integer.parseInt(request.getParameter("id"));
 			
-			// 2. Json으로 바꾸기
-			Gson gson = new Gson();
-			DeleteReqDto dto = gson.fromJson(data, DeleteReqDto.class);
-			//System.out.println("dto: " + dto);
-			
-			// 3. 서비스에서 받은 값으로 분기 해주기
-			int result = boardService.게시글삭제(dto.getBoardId());
+			int result = boardService.게시글삭제(id);
 			System.out.println("result: " + result);
-			DeleteRespDto respDto = new DeleteRespDto();
-			if(result == 1) {
-				respDto.setStatus("okay");
-			} else {
-				respDto.setStatus("fail");
-			}
+			CommonRespDto<String> commonRespDto = new CommonRespDto<>();
+			commonRespDto.setStatusCode(result);
+			commonRespDto.setData("성공");
 			
 			// 4. 자바 오브젝트를 Json으로 바꿔 응답해주기
-			String respData = gson.toJson(respDto);
-			System.out.println("respDto: " + respDto);
+			Gson gson = new Gson();
+			String respData = gson.toJson(commonRespDto);
+			System.out.println("commonRespDto: " + commonRespDto);
 			System.out.println("respData: " + respData);
 			PrintWriter out = response.getWriter();
 			out.print(respData);
@@ -181,10 +170,10 @@ public class BoardController extends HttpServlet {
 			if (result == 1) {
 				// 왜 샌드리다렉을 사용헸을까??
 				
-				response.sendRedirect("/blog/board?cmd=detail&id="+id);
-//				RequestDispatcher dis = 
-//				request.getRequestDispatcher("/board?cmd=detail&id="+id);
-//				dis.forward(request, response);
+//				response.sendRedirect("/blog/board?cmd=detail&id="+id);
+				RequestDispatcher dis = 
+				request.getRequestDispatcher("/board?cmd=detail&id="+id);
+				dis.forward(request, response);
 			} else {
 				Script.back(response, "글 수정에 실패 했습니다.");
 			}

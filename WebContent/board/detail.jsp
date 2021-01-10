@@ -68,20 +68,16 @@
 
 <script>
 
+	
 	function deleteById(boardId){
-		var data = {
-			boardId: boardId
-		}
-		
 		$.ajax({
+			/* 질문) 왜 post를 delete로 바꾸면 실행되지 않는 이유 */
 			type: "post",
-			url: "/blog/board?cmd=delete",
-			data: JSON.stringify(data),
-			contentType: "application/json; charset=utf-8",
+			url: "/blog/board?cmd=delete&id="+boardId,
 			dataType: "json" 
 			})
 		.done(function(result){
-				if(result.status == "okay"){
+				if(result.statusCode == 1){
 						console.log(result);
 						alert("게시물 삭제 성공");
 						location.href = "index.jsp";

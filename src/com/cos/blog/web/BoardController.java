@@ -185,7 +185,29 @@ public class BoardController extends HttpServlet {
 			} else {
 				Script.back(response, "글 수정에 실패 했습니다.");
 			}
-		} 
+		} else if(cmd.equals("search")) {
+			String keyword = request.getParameter("keyword");
+			int page = Integer.parseInt(request.getParameter("page"));
+			
+			List<Board> boards = boardService.글검색(keyword, page);
+			request.setAttribute("boards", boards);
+			
+			int boardCount = boardService.글개수(keyword);
+			
+			int lastPage = (boardCount-1)/4; // 4/4 => 0 첫페이지page = 0
+			double currentPosition = (double)page/lastPage*100;
+		
+			System.out.println("boardCount: " + boardCount);
+			System.out.println("lastPage: " + lastPage);
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("currentPosition", currentPosition);
+			
+			System.out.println(boards);
+			request.setAttribute("boardList", boards);
+			RequestDispatcher dis = request.getRequestDispatcher("board/list.jsp");
+			dis.forward(request, response);
+			
+		}
 	}
 
 }

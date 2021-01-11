@@ -38,6 +38,10 @@ public class BoardService {
 		return boardDao.count();
 	}
 	
+	public int 글개수(String keyword) {
+		return boardDao.count(keyword);
+	}
+	
 	// 글 상세보기 서비스를 호출했다면
 	// 웹 화면에 필요한 상세보기 정보를 한 번에 다 리턴해줘야하는 것이 올바르다
 	// 서비스를 나눠서 저기서 반 다른 곳에서 반 이렇게 상세보기 정보를 나눠서 들고오는 것은
@@ -58,6 +62,10 @@ public class BoardService {
 	
 	public int 글수정(UpdateReqDto dto) {
 		return boardDao.update(dto);
+	}
+	
+	public List<Board> 글검색(String keyword, int page){
+		return boardDao.findByKeyword(keyword, page);
 	}
 	
 	

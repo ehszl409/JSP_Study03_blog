@@ -15,7 +15,40 @@ import com.cos.blog.domain.board.dto.saveReqDto;
 
 public class BoardDao {
 	
-
+	public List<Board> findByKeyword(String keyword, int page) { // 게시물 목록
+		// 쿼리 준비
+		String sql = "SELECT id, userId, title, content, readCount, createDate FROM board WHERE title like ? ORDER BY id DESC LIMIT ?,4";
+		// DB 연결
+		Connection conn = DB.getConnection();
+		// 쿼리를 파싱해준다.
+		PreparedStatement pstmt = null;
+		// 게시글들을 담을 리스트 객체 생성.
+		List<Board> boards = new ArrayList<>();
+		
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%"+keyword+"%");
+			pstmt.setInt(2, page*4);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				Board boardList = new Board();
+				boardList.setId(rs.getInt("id"));
+				boardList.setUserId(rs.getInt("userId"));
+				boardList.setTitle(rs.getString("title"));
+				boardList.setContent(rs.getString("content"));
+				boardList.setReadCount(rs.getInt("readCount"));
+				boardList.setCreateDate(rs.getTimestamp("createDate"));
+				boards.add(boardList);
+			}
+			return boards;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+		return null;
+	}
 	
 	
 	
@@ -133,6 +166,30 @@ public class BoardDao {
 			DB.close(conn, pstmt, rs);
 		}
 		return null;
+	
+	}
+	
+	public int count(String keyword) { // 총 게시글 찾기
+		// 쿼리 준비
+		String sql = "SELECT count(*) FROM board WHERE title like ?";
+		Connection conn = DB.getConnection();
+		// 쿼리를 파싱해준다.
+		PreparedStatement pstmt = null;
+		
+		ResultSet rs = null;
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, "%"+keyword+"%");
+			rs = pstmt.executeQuery();		
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DB.close(conn, pstmt, rs);
+		}
+		return -1;
 	}
 	
 	
@@ -146,6 +203,7 @@ public class BoardDao {
 			ResultSet rs = null;
 			try {
 				pstmt = conn.prepareStatement(sql);
+				
 				rs = pstmt.executeQuery();		
 				if(rs.next()) {
 					return rs.getInt(1);

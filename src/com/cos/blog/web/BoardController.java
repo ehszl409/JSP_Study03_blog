@@ -18,8 +18,11 @@ import com.cos.blog.domain.board.dto.CommonRespDto;
 import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
+import com.cos.blog.domain.reply.Reply;
+import com.cos.blog.domain.reply.dto.ReplyReqDto;
 import com.cos.blog.domain.user.User;
 import com.cos.blog.service.BoardService;
+import com.cos.blog.service.ReplyService;
 import com.cos.blog.utill.Script;
 import com.google.gson.Gson;
 
@@ -48,6 +51,7 @@ public class BoardController extends HttpServlet {
 		String cmd = request.getParameter("cmd");
 		HttpSession session = request.getSession();
 		BoardService boardService = new BoardService();
+		ReplyService replyService = new ReplyService();
 		
 		
 		// 로그인을 하고 글쓰기를 했는지 판단하는 로직
@@ -111,14 +115,18 @@ public class BoardController extends HttpServlet {
 			dis.forward(request, response);
 		} else if (cmd.equals("detail")) { // 상세보기 구현
 			System.out.println("detail접속.");
+			// id = boardId
 			int id = Integer.parseInt(request.getParameter("id"));
 			DetailReqDto dto = boardService.글상세보기(id);
+			List<Reply> replys = replyService.댓글목록보기(id);
 			
 			if(dto == null) {
 				Script.back(response, "글 상세보기를 불러오는 것이 실패 했습니다.");
 			} else {
 			request.setAttribute("dto", dto);
+			request.setAttribute("replys", replys);
 			System.out.println("dto:" + dto);
+			System.out.println("replys: "+ replys);
 			RequestDispatcher dis = 
 			request.getRequestDispatcher("board/detail.jsp");
 			dis.forward(request, response);
@@ -177,9 +185,7 @@ public class BoardController extends HttpServlet {
 			} else {
 				Script.back(response, "글 수정에 실패 했습니다.");
 			}
-			
-			
-		}
+		} 
 	}
 
 }

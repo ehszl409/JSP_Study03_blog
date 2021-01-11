@@ -12,7 +12,12 @@ import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
 
 
+
 public class BoardDao {
+	
+
+	
+	
 	
 	public int update(UpdateReqDto dto) { // 조회수 증가
 		String sql = "UPDATE board SET title = ?, content = ? WHERE id = ?";

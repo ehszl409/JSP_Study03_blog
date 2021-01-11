@@ -7,6 +7,7 @@ import com.cos.blog.domain.board.BoardDao;
 import com.cos.blog.domain.board.dto.DetailReqDto;
 import com.cos.blog.domain.board.dto.UpdateReqDto;
 import com.cos.blog.domain.board.dto.saveReqDto;
+import com.cos.blog.domain.reply.dto.ReplyReqDto;
 
 // 게시판에 대한 많은 서비스들을 컨트롤러로 부터 요청받아 DB에게 분기 시켜주는 역할
 
@@ -37,6 +38,10 @@ public class BoardService {
 		return boardDao.count();
 	}
 	
+	// 글 상세보기 서비스를 호출했다면
+	// 웹 화면에 필요한 상세보기 정보를 한 번에 다 리턴해줘야하는 것이 올바르다
+	// 서비스를 나눠서 저기서 반 다른 곳에서 반 이렇게 상세보기 정보를 나눠서 들고오는 것은
+	// 서비스의 개념에 맞지 않다. 하지만 지금은 그렇게 구현 하겠
 	public DetailReqDto 글상세보기(int id) {
 		// 조회수를 올리는 로직 구현
 		
@@ -54,5 +59,7 @@ public class BoardService {
 	public int 글수정(UpdateReqDto dto) {
 		return boardDao.update(dto);
 	}
+	
+	
 	
 }
